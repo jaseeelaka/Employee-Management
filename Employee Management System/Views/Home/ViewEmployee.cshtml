@@ -1,0 +1,129 @@
+﻿@using System.Data;
+@using System.Data.SqlClient;
+@using Microsoft.AspNetCore.Mvc;
+@using Employee_Management_System
+@inject IConfiguration Configuration;
+@{
+
+   
+
+}
+<h1>Public EnquiryList</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+
+    @{
+
+        using (CommonCLibrary.DAL db = new CommonCLibrary.DAL(Configuration))
+        {
+            List<SqlParameter> sqlParams = new List<SqlParameter>();
+
+            System.Data.DataSet ds = db.SqlDataSetResult("USP_ViewEmp", sqlParams);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                DataTable dt = new DataTable();
+                dt = ds.Tables[0];
+                <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>DoB</th>
+                            <th>Gender</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    @foreach (DataRow row in dt.Rows)
+                    {
+
+                        string EMP_DocNo = row["EMP_DocNo"].ToString();
+                        string EMP_Name = row["EMP_Name"].ToString();
+                        string EMP_Address = row["EMP_Address"].ToString();
+                        string EMP_DOB = row["EMP_DOB"].ToString();
+                        string EMP_Gender = row["EMP_Gender"].ToString();
+
+                <tr>
+                    <td>@EMP_Name</td>
+                    <td>@EMP_Address</td>
+                    <td>@EMP_DOB</td>
+                    <td>@EMP_Gender</td>
+
+
+
+                    <td>
+                        <a href="/home/EditEMP?EMP_DocNo=@EMP_DocNo">Edit</a>
+
+                    </td>
+                    <td>
+                        <button onclick="Delete( '@EMP_DocNo')" type="button">Delete</button>
+                    </td>
+
+
+                </tr>
+
+                    }
+
+
+
+
+
+
+
+
+                </table>
+
+            }
+            else
+            {
+
+                <h4>No Record Found</h4>
+            }
+
+        }
+
+
+    }
+
+
+</body>
+</html>
+<script>
+    function Delete(EMP_DocNo) {
+        debugger;
+        var params = {
+            EMP_DocNo
+
+        }
+        $.getJSON("/home/Deleteemp", params, function (result) {
+
+            location.reload();
+
+        });
+
+    }
+
+</script>
+
+
+
